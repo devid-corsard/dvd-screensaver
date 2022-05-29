@@ -1,0 +1,130 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #field {
+      background-color: black;
+      color: aliceblue;
+      position: fixed;
+      left: 0px;
+      top: 0px
+    }
+    #rect {
+      background-color: red;
+      width: 350px;
+      height: 250px;
+      line-height: 250px;
+      font-size: 90px;
+      text-align: center;
+      color: aliceblue;
+      border-radius: 50%;
+    }
+    #counter {
+        color: aliceblue;
+        font-size: 90px;
+        z-index: 5;
+    }
+  </style>
+</head>
+<body>
+  <div id="field">
+    <div id="rect">
+        DVD
+    </div>
+  </div>
+  <div id="counter"></div>
+  <script>
+
+    let rect = document.querySelector('#rect')
+    let field = document.querySelector('#field')
+    let rectTop = Math.random() * (document.documentElement.clientHeight - rect.clientHeight)
+    let rectLeft = Math.random() * (document.documentElement.clientWidth - rect.clientWidth)
+
+    rect.style.marginTop = rectTop
+    rect.style.marginLeft = rectLeft
+
+    let invertX = 1
+    let invertY = 1
+    let windowSize = {
+      height: document.documentElement.clientHeight,
+      width: document.documentElement.clientWidth
+    }
+    field.style.height = windowSize.height
+    field.style.width = windowSize.width
+
+    let counter = 0
+    
+    let isMoving = true
+    
+    let step = 3
+    let ms = 1000/60
+
+    let movement = setInterval(screenSaver, ms)
+
+    function stop(myInterval) {
+      clearInterval(myInterval);
+    }
+
+    document.addEventListener('mousedown', function() {
+      if (isMoving) {
+        stop(movement)
+        isMoving = false
+      } else {
+        movement = setInterval(screenSaver, ms)
+        isMoving = true
+      }
+    })
+
+    function scaleX(element) {
+      element.style.height = element.style.lineHeight = element.clientHeight * 0.98 + 'px'
+      // if (element.style.height < element.style.fontSize) element.style.fontSize = element.style.height
+      element.style.width = element.clientWidth * 1.01 + 'px'
+    }
+
+    function scaleY(element) {
+      element.style.height = element.style.lineHeight = element.clientHeight * 1.01 + 'px'
+      element.style.width = element.clientWidth * 0.98 + 'px'
+    }
+
+    function screenSaver() {
+
+      document.querySelector('#counter').textContent = counter
+
+
+      if (rect.getBoundingClientRect().top < 0) {
+        invertY = 1
+        scaleX(rect)
+        counter++
+      }
+
+      if (rect.getBoundingClientRect().left < 0) {
+        invertX = 1
+        scaleY(rect)
+        counter++
+      }
+
+      if (rect.getBoundingClientRect().bottom > parseInt(field.style.height)) {
+        invertY = -1
+        counter++
+        scaleX(rect)
+      }
+
+      if (rect.getBoundingClientRect().right > parseInt(field.style.width)) {
+        invertX = -1
+        counter++
+        scaleY(rect)
+      }
+
+      rectTop += (step * invertY)
+      rectLeft += (step * invertX)
+
+      rect.style.marginTop = rectTop
+      rect.style.marginLeft = rectLeft
+    }
+  </script>
+  
+</body>
+</html>
